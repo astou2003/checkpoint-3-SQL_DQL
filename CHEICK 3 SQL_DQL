@@ -1,0 +1,155 @@
+create database check3_SQL;
+use check3_SQL;
+CREATE TABLE clients (
+customer_id INTEGER PRIMARY KEY,
+customer_name VARCHAR(50) NOT NULL,
+customer_tel VARCHAR (100) NOT NULL
+);
+select * from clients;
+CREATE TABLE product (
+product_id INTEGER PRIMARY KEY ,
+product_name VARCHAR(150),
+category VARCHAR(70),
+price decimal (15, 3)
+);
+select * from product;
+CREATE TABLE orders (
+orders_id INTEGER PRIMARY KEY,
+customer_id integer not null,
+product_id integer not null,
+order_date date not null,
+quantity integer not null,
+total_amount integer not null,
+FOREIGN KEY (customer_id) REFERENCES clients (customer_id),
+FOREIGN KEY (product_id) REFERENCES product (product_id)
+);
+select * from orders;   
+
+INSERT INTO clients (customer_id, customer_name, customer_tel) values 
+(1, 'client A', 'tel A'),
+(2, 'client B', 'tel B');
+INSERT INTO clients (customer_id, customer_name, customer_tel) values 
+(3, 'client C', 'tel C');
+select * from clients; 
+
+INSERT INTO product (product_id, product_name, category, price) values
+(1, 'product C', 'bio', 10),
+(2, 'product D ', 'bio', 15);
+
+SET SQL_SAFE_UPDATES = 0;
+UPDATE Product
+SET product_name = 'Widget'
+WHERE  product_name = 'product C';
+
+UPDATE Product
+SET product_name = 'Gadget'
+WHERE  product_name = 'product D';
+
+UPDATE product
+SET category = 'application'
+WHERE category = 'bio';
+INSERT INTO product (product_id, product_name, category, price) values
+(3, 'doohickey', 'application', 12);
+select * from product;
+
+INSERT INTO orders (orders_id, customer_id, product_id, order_date, quantity, total_amount) values
+(1, 1, 1, '2024/04/08', 3, 10),
+(2, 2, 2, '2024/04/09', 6, 11);
+INSERT INTO orders (orders_id, customer_id, product_id, order_date, quantity, total_amount) values
+(3, 3, 3, '2024/04/10', 7, 13);
+select * from orders;
+
+SELECT customer_name,
+ SUM(total_amount)
+FROM clients
+join orders
+on clients.customer_id = orders.customer_id
+join product 
+on orders.product_id = product.product_id
+GROUP BY customer_name;
+
+SELECT customer_name,
+ SUM(quantity * price) AS total_amount
+FROM clients
+join orders
+on clients.customer_id = orders.customer_id
+join product 
+on orders.product_id = product.product_id
+where product_name = 'widget'
+GROUP BY customer_name;
+
+SELECT customer_name,
+ SUM(quantity * price) AS total_amount
+FROM clients
+join orders
+on clients.customer_id = orders.customer_id
+join product 
+on orders.product_id = product.product_id
+where product_name = 'gadget'
+GROUP BY customer_name;
+
+
+SELECT customer_name,
+ SUM(quantity * price) AS total_amount
+FROM clients
+join orders
+on clients.customer_id = orders.customer_id
+join product 
+on orders.product_id = product.product_id
+where product_name = 'doohickey'
+GROUP BY customer_name;
+SELECT customer_name,
+ SUM(quantity) AS nombre_total, SUM(quantity * price) AS total_amount
+FROM clients
+join orders
+on clients.customer_id = orders.customer_id
+join product 
+on orders.product_id = product.product_id
+where product_name = 'widget'
+AND product_name = 'gadget'
+GROUP BY customer_name;
+
+SELECT customer_name,
+ SUM(quantity) AS quantity_total
+FROM clients
+join product
+on clients.customer_id = product.product_id
+join orders 
+on orders.product_id = product.product_id
+GROUP BY customer_name;
+
+SELECT Customer_name, max(total_amount), sum(total_amount)
+FROM clients
+join product
+on clients.customer_id = product.product_id
+join orders 
+on orders.product_id = product.product_id
+GROUP BY customer_name;
+
+SELECT Customer_name, max(product_name), sum(total_amount)
+FROM clients
+join product
+on clients.customer_id = product.product_id
+join orders 
+on orders.product_id = product.product_id
+GROUP BY customer_name;
+
+SELECT Customer_name,
+sum(quantity)
+FROM clients
+join product
+on clients.customer_id = product.product_id
+join orders 
+on orders.product_id = product.product_id
+WHERE order_Date = 2024/04/08 OR 2024/04/09 OR 2024/04/10
+GROUP BY customer_name;
+
+
+
+
+
+
+
+
+
+ 
